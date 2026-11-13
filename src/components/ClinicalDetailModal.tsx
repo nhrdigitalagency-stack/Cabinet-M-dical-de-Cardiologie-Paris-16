@@ -9,6 +9,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import {
+  ClinicSiteData,
   ExplorationItem,
   HealthArticleItem,
   Language,
@@ -24,6 +25,8 @@ export type SelectedClinicalItem =
 
 interface ClinicalDetailModalProps {
   selected: SelectedClinicalItem;
+  siteData?: ClinicSiteData;
+  onSelectClinicalItem?: (item: SelectedClinicalItem) => void;
   onClose: () => void;
   lang: Language;
   onBookWithSubject: (subject: string) => void;
@@ -31,11 +34,27 @@ interface ClinicalDetailModalProps {
 
 export const ClinicalDetailModal: React.FC<ClinicalDetailModalProps> = ({
   selected,
+  siteData,
+  onSelectClinicalItem,
   onClose,
   lang,
   onBookWithSubject,
 }) => {
   if (!selected) return null;
+
+  const linkedExplorations =
+    selected.kind === 'article' && siteData
+      ? siteData.explorations.filter((e) =>
+          (selected.item.relatedExplorationIds || []).includes(e.id)
+        )
+      : [];
+
+  const linkedPathologies =
+    selected.kind === 'article' && siteData
+      ? siteData.pathologies.filter((p) =>
+          (selected.item.relatedPathologyIds || []).includes(p.id)
+        )
+      : [];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[#061B49]/65 backdrop-blur-md overflow-y-auto">
@@ -56,7 +75,7 @@ export const ClinicalDetailModal: React.FC<ClinicalDetailModalProps> = ({
             />
             <div className="p-6 sm:p-8 space-y-5">
               <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-[#DC141C] flex items-center gap-2">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#DC141C] flex flex-wrap items-center gap-2">
                   <span>EXPLORATION CARDIOLOGIQUE #{selected.item.number}</span>
                   <span>·</span>
                   <span className="text-[#0052CC]">
@@ -69,7 +88,7 @@ export const ClinicalDetailModal: React.FC<ClinicalDetailModalProps> = ({
                         : 'Scheduled procedure'}
                   </span>
                 </div>
-                <h3 className="text-2xl font-extrabold text-[#061B49] mt-1">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#061B49] mt-1">
                   {selected.item.title[lang]}
                 </h3>
               </div>
@@ -139,7 +158,7 @@ export const ClinicalDetailModal: React.FC<ClinicalDetailModalProps> = ({
                 <p className="text-xs font-bold uppercase tracking-wider text-[#DC141C]">
                   PATHOLOGIE PRISE EN CHARGE #{selected.item.number}
                 </p>
-                <h3 className="text-2xl font-extrabold text-[#061B49]">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#061B49]">
                   {selected.item.title[lang]}
                 </h3>
               </div>
@@ -220,13 +239,68 @@ export const ClinicalDetailModal: React.FC<ClinicalDetailModalProps> = ({
               </div>
             </div>
 
-            <h3 className="text-2xl font-extrabold text-[#061B49]">
+            <h3 className="text-xl sm:text-2xl font-extrabold text-[#061B49]">
               {selected.item.title[lang]}
             </h3>
 
             <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
               {selected.item.content[lang]}
             </p>
+
+            {selected.item.keyTakeaways?.[lang] && (
+              <div className="p-4 rounded-2xl bg-[#F4F8FD] border border-slate-200/80 space-y-2">
+                <div className="text-xs font-extrabold uppercase tracking-wider text-[#0052CC]">
+                  {lang === 'fr' ? 'Points clés à retenir :' : 'Key Takeaways:'}
+                </div>
+                <ul className="space-y-1.5">
+                  {selected.item.keyTakeaways[lang].map((tip, idx) => (
+                    <li key={idx} className="text-xs sm:text-sm text-[#061B49] flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#DC141C] shrink-0 mt-0.5" />
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {(linkedExplorations.length > 0 || linkedPathologies.length > 0) &&
+              onSelectClinicalItem && (
+                <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                  <div className="text-xs font-extrabold uppercase tracking-wider text-[#061B49]">
+                    {lang === 'fr'
+                      ? 'Services & Examens du Cabinet Associés :'
+                      : 'Linked Clinic Services & Explorations:'}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {linkedExplorations.map((exp) => (
+                      <button
+                        key={exp.id}
+                        type="button"
+                        onClick={() =>
+                          onSelectClinicalItem({ kind: 'exploration', item: exp })
+                        }
+                        className="px-3 py-1.5 rounded-xl bg-[#EBF3FC] hover:bg-[#0052CC] text-[#0052CC] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Stethoscope className="w-3.5 h-3.5 shrink-0" />
+                        <span>{exp.title[lang]}</span>
+                      </button>
+                    ))}
+                    {linkedPathologies.map((pat) => (
+                      <button
+                        key={pat.id}
+                        type="button"
+                        onClick={() =>
+                          onSelectClinicalItem({ kind: 'pathology', item: pat })
+                        }
+                        className="px-3 py-1.5 rounded-xl bg-[#FCE8EA] hover:bg-[#DC141C] text-[#DC141C] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Activity className="w-3.5 h-3.5 shrink-0" />
+                        <span>{pat.title[lang]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
             <div className="pt-2 flex flex-wrap items-center justify-end gap-3">
               <button
@@ -239,7 +313,8 @@ export const ClinicalDetailModal: React.FC<ClinicalDetailModalProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  const subj = selected.item.title[lang];
+                  const subj =
+                    linkedExplorations[0]?.title[lang] || selected.item.title[lang];
                   onClose();
                   onBookWithSubject(subj);
                 }}

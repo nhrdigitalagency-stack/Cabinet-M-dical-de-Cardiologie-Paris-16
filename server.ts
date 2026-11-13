@@ -45,6 +45,32 @@ function sanitizeText(input: unknown, maxLen = 1000): string {
     .slice(0, maxLen);
 }
 
+function ensureRichArticles(data: ClinicSiteData): ClinicSiteData {
+  const existing = Array.isArray(data.articles) ? data.articles : [];
+  const defaultMap = new Map(INITIAL_CLINIC_DATA.articles.map((a) => [a.id, a]));
+  const merged = existing.map((art) => {
+    const def = defaultMap.get(art.id);
+    if (!def) return art;
+    return {
+      ...def,
+      ...art,
+      keyTakeaways: art.keyTakeaways || def.keyTakeaways,
+      seoKeywords: art.seoKeywords || def.seoKeywords,
+      relatedExplorationIds: art.relatedExplorationIds || def.relatedExplorationIds,
+      relatedPathologyIds: art.relatedPathologyIds || def.relatedPathologyIds,
+    };
+  });
+  for (const def of INITIAL_CLINIC_DATA.articles) {
+    if (!merged.some((m) => m.id === def.id)) {
+      merged.push(def);
+    }
+  }
+  return {
+    ...data,
+    articles: merged,
+  };
+}
+
 function loadLocalStore(): LocalStore {
   try {
     if (!fs.existsSync(CACHE_DIR)) {
@@ -54,7 +80,7 @@ function loadLocalStore(): LocalStore {
       const raw = fs.readFileSync(CACHE_FILE, 'utf-8');
       const parsed = JSON.parse(raw);
       return {
-        siteData: parsed.siteData || INITIAL_CLINIC_DATA,
+        siteData: ensureRichArticles(parsed.siteData || INITIAL_CLINIC_DATA),
         testimonials: Array.isArray(parsed.testimonials) ? parsed.testimonials : INITIAL_TESTIMONIALS,
         appointments: Array.isArray(parsed.appointments) ? parsed.appointments : [],
         adminCredentials: parsed.adminCredentials || {
@@ -154,7 +180,7 @@ async function syncWithSanityOnBoot() {
       `*[_type == "clinicConfig" && _id == "clinic-config-paris16"][0]`
     );
     if (remoteConfig && remoteConfig.payload) {
-      store.siteData = remoteConfig.payload;
+      store.siteData = ensureRichArticles(remoteConfig.payload);
     } else {
       await sanityMutate([
         {
@@ -283,6 +309,12 @@ async function startServer() {
     <loc>${baseUrl}/?section=explorations</loc>
     <lastmod>${now}</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/?section=insights</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>

@@ -51,12 +51,14 @@ import {
   SelectedClinicalItem,
 } from './components/ClinicalDetailModal';
 import { LogoSplashLoader } from './components/LogoSplashLoader';
+import { CardiologyInsightsSection } from './components/CardiologyInsightsSection';
 
 type PageView =
   | 'home'
   | 'about'
   | 'explorations'
   | 'pathologies'
+  | 'insights'
   | 'testimonials'
   | 'contact';
 
@@ -101,7 +103,15 @@ export default function App() {
     const sec = params.get('section') as PageView | null;
     if (
       sec &&
-      ['home', 'about', 'explorations', 'pathologies', 'testimonials', 'contact'].includes(sec)
+      [
+        'home',
+        'about',
+        'explorations',
+        'pathologies',
+        'insights',
+        'testimonials',
+        'contact',
+      ].includes(sec)
     ) {
       setActivePage(sec);
     }
@@ -142,6 +152,10 @@ export default function App() {
       explorations: {
         fr: 'ECG, Échocardiographie Doppler, Holter, MAPA & Apnée du Sommeil à Douala (Bonapriso) | Cameroun',
         en: 'ECG, Doppler Echocardiography, Holter, ABPM & Sleep Apnea in Douala (Bonapriso) | Cameroon',
+      },
+      insights: {
+        fr: 'Cardiology Insights · Blog Santé du Cœur, HTA, Apnée du Sommeil & Prévention à Douala & Cameroun | Dr Annick TCHAM',
+        en: 'Cardiology Insights · Heart Health Tips, Hypertension, Sleep Apnea & Prevention Blog in Douala & Cameroon | Dr Annick TCHAM',
       },
       testimonials: {
         fr: 'Avis Patients Cardiologue Douala & Cameroun | Cabinet Médical de Cardiologie Paris 16',
@@ -241,6 +255,7 @@ export default function App() {
     { id: 'about', label: { fr: 'Dr TCHAM', en: 'Dr TCHAM' } },
     { id: 'pathologies', label: { fr: 'Spécialités', en: 'Specialties' } },
     { id: 'explorations', label: { fr: 'Explorations', en: 'Explorations' } },
+    { id: 'insights', label: { fr: 'Cardiology Insights', en: 'Cardiology Insights' } },
     { id: 'testimonials', label: { fr: 'Témoignages', en: 'Testimonials' } },
     { id: 'contact', label: { fr: 'Plan & Contact', en: 'Map & Contact' } },
   ];
@@ -467,6 +482,10 @@ export default function App() {
                       (lang === 'fr'
                         ? 'Spécialités Médicales & 8 Pathologies Prises en Charge'
                         : 'Medical Specialties & 8 Conditions Treated')}
+                    {activePage === 'insights' &&
+                      (lang === 'fr'
+                        ? 'Cardiology Insights · Blog & Conseils Santé du Cœur'
+                        : 'Cardiology Insights · Heart Health Tips & Clinical Guides')}
                     {activePage === 'testimonials' &&
                       (lang === 'fr'
                         ? 'Témoignages Patients en Direct'
@@ -1549,68 +1568,53 @@ export default function App() {
               ))}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-              {/* Showcase 1: Official Identity & Logo (4 cols) */}
-              <div className="md:col-span-4 bg-white rounded-3xl p-6 wave-hover-card flex flex-col items-center justify-between text-center">
-                <div className="my-auto py-4">
-                  <img
-                    src={siteData.logoUrl}
-                    alt={siteData.clinicName[lang]}
-                    referrerPolicy="no-referrer"
-                    className="w-48 h-48 object-contain mx-auto transition-transform duration-500 hover:scale-105"
-                  />
-                  <h3 className="text-base font-extrabold text-[#061B49] mt-4">
-                    {siteData.clinicName[lang]}
-                  </h3>
-                  <p className="text-xs text-[#DC141C] font-bold mt-1">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 wave-hover-card flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+                <img
+                  src={siteData.logoUrl}
+                  alt={siteData.clinicName[lang]}
+                  referrerPolicy="no-referrer"
+                  className="w-24 h-24 object-contain shrink-0 transition-transform duration-500 hover:scale-105"
+                />
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#DC141C]">
                     {siteData.sloganPrimary[lang]}
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-extrabold text-[#061B49] mt-0.5">
+                    {siteData.clinicName[lang]} · {siteData.doctorName}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+                    {siteData.addressFull[lang]}
                   </p>
                 </div>
-                <div className="w-full pt-4 border-t border-slate-100 text-xs text-slate-500">
-                  {siteData.addressShort[lang]}
-                </div>
               </div>
-
-              {/* Showcase 2: Articles & Preventive Dossiers (8 cols) */}
-              <div className="md:col-span-8 grid grid-cols-1 gap-4">
-                {siteData.articles.map((article) => (
-                  <article
-                    key={article.id}
-                    onClick={() => setSelectedClinicalItem({ kind: 'article', item: article })}
-                    className="bg-white rounded-3xl p-4 sm:p-5 wave-hover-card flex flex-col sm:flex-row gap-5 items-center cursor-pointer group"
-                  >
-                    <div className="w-full sm:w-44 h-36 rounded-2xl overflow-hidden shrink-0">
-                      <ExplorationIllustration
-                        type={
-                          article.illustrationType === 'sleep-apnea'
-                            ? 'polygraphy'
-                            : article.illustrationType === 'hypertension'
-                              ? 'mapa'
-                              : 'echo-doppler'
-                        }
-                        className="w-full h-full"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <div className="text-xs text-slate-500 flex items-center gap-1.5">
-                        <span className="font-bold text-[#DC141C]">
-                          {article.category[lang]}
-                        </span>
-                        <span>·</span>
-                        <span>{article.readTime[lang]}</span>
-                      </div>
-                      <h3 className="text-base sm:text-lg font-extrabold text-[#061B49] group-hover:text-[#0052CC] transition-colors">
-                        {article.title[lang]}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-slate-600">
-                        {article.summary[lang]}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
+              <button
+                type="button"
+                onClick={() => navigateToPage('insights')}
+                className="px-5 py-3 rounded-full bg-[#061B49] hover:bg-[#0052CC] text-white text-xs font-extrabold flex items-center gap-2 shrink-0 transition-colors cursor-pointer"
+              >
+                <span>
+                  {lang === 'fr'
+                    ? 'Lire le Blog Cardiology Insights'
+                    : 'Read Cardiology Insights Blog'}
+                </span>
+                <ArrowRight className="w-4 h-4 text-[#FF4D58]" />
+              </button>
             </div>
           </section>
+        )}
+
+        {/* =====================================================================
+            SECTION 8B: CARDIOLOGY INSIGHTS — BLOG SANTÉ DU CŒUR & MAILLAGE INTERNE SEO
+            - Heart Health Tips with direct backlinks to clinic Explorations & Pathologies
+           ===================================================================== */}
+        {(activePage === 'home' || activePage === 'insights') && (
+          <CardiologyInsightsSection
+            siteData={siteData}
+            lang={lang}
+            onSelectClinicalItem={(item) => setSelectedClinicalItem(item)}
+            onBookWithSubject={(subj) => openBookingWithSubject(subj)}
+          />
         )}
 
         {/* =====================================================================
@@ -2265,6 +2269,8 @@ export default function App() {
         onClose={() => setSelectedClinicalItem(null)}
         lang={lang}
         onBookWithSubject={(subj) => openBookingWithSubject(subj)}
+        siteData={siteData}
+        onSelectClinicalItem={(item) => setSelectedClinicalItem(item)}
       />
 
       <AdminPortalModal
