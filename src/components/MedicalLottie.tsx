@@ -1,5 +1,5 @@
 import React from 'react';
-import Lottie from 'lottie-react';
+import { Lottie } from 'lottie-react';
 
 export type MedicalLottieVariant =
   | 'heartbeat-pulse'
@@ -403,7 +403,7 @@ export const MedicalLottie: React.FC<MedicalLottieProps> = ({
 
   return (
     <div className={`inline-flex items-center justify-center shrink-0 ${className}`} aria-hidden="true">
-      <Lottie animationData={animationData} loop={true} autoplay={true} className="w-full h-full" />
+      <Lottie src={animationData} loop={true} autoplay={true} className="w-full h-full" />
     </div>
   );
 };
