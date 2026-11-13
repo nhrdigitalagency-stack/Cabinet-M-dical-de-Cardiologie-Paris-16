@@ -52,6 +52,7 @@ import {
 } from './components/ClinicalDetailModal';
 import { LogoSplashLoader } from './components/LogoSplashLoader';
 import { CardiologyInsightsSection } from './components/CardiologyInsightsSection';
+import { MedicalLottie } from './components/MedicalLottie';
 
 type PageView =
   | 'home'
@@ -303,158 +304,197 @@ export default function App() {
         transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
         className="min-h-screen flex flex-col bg-[#F4F8FD] text-[#061B49]"
       >
-        {/* FLOATING TRANSPARENT ROUNDED HEADER — Fully Responsive across Mobile, Tablet & Desktop */}
-        <div className="sticky top-2 sm:top-3 z-40 px-2.5 sm:px-6 lg:px-8">
-          <header className="max-w-7xl mx-auto bg-white/82 backdrop-blur-xl rounded-2xl lg:rounded-full border border-white/80 shadow-[0_12px_36px_-10px_rgba(6,27,73,0.16)] px-3 sm:px-5 lg:px-7 py-2 sm:py-0 sm:h-20 flex items-center justify-between gap-2 sm:gap-4 lg:gap-6 transition-all">
-            {/* Zone 1: Brand Wordmark — Never truncates or hides clinic name */}
-            <button
-              type="button"
-              onClick={() => navigateToPage('home')}
-              className="flex items-center gap-2 sm:gap-3 text-left min-w-0 shrink-0 cursor-pointer group"
-            >
-              <img
-                src={siteData.logoUrl}
-                alt={siteData.clinicName[lang]}
-                referrerPolicy="no-referrer"
-                className="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-xl bg-white p-1 border border-[#0052CC]/20 group-hover:border-[#DC141C] transition-colors shrink-0"
-              />
-              <div className="leading-tight">
-                <span className="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#0052CC]">
-                  Cabinet Médical
-                </span>
-                <span className="block text-xs sm:text-base font-extrabold tracking-tight text-[#061B49]">
-                  Cardiologie <span className="text-[#DC141C]">Paris 16</span>
-                </span>
-              </div>
-            </button>
+        {/* FLOATING TRANSPARENT ROUNDED HEADER — Fully Responsive on Computer (lg/xl), Tablet (sm/md) & Phone (<sm) */}
+        <div className="sticky top-2 sm:top-3 z-40 px-2 sm:px-4 lg:px-6 xl:px-8">
+          <header className="max-w-7xl mx-auto bg-white/88 backdrop-blur-xl rounded-2xl lg:rounded-full border border-white/90 shadow-[0_12px_36px_-10px_rgba(6,27,73,0.16)] px-3 sm:px-5 lg:px-5 xl:px-7 py-2 sm:py-2.5 lg:py-0 lg:h-20 flex flex-col justify-center transition-all">
+            <div className="flex items-center justify-between gap-2 sm:gap-3 lg:gap-3 xl:gap-5 w-full">
+              {/* Zone 1: Brand Wordmark + Official Logo — Clean & readable on Phone, Tablet, and Computer */}
+              <button
+                type="button"
+                onClick={() => navigateToPage('home')}
+                className="flex items-center gap-2 sm:gap-2.5 xl:gap-3 text-left min-w-0 shrink-0 cursor-pointer group"
+              >
+                <img
+                  src={siteData.logoUrl}
+                  alt={siteData.clinicName[lang]}
+                  referrerPolicy="no-referrer"
+                  className="w-9 h-9 sm:w-11 sm:h-11 xl:w-12 xl:h-12 object-contain rounded-xl bg-white p-1 border border-[#0052CC]/20 group-hover:border-[#DC141C] transition-colors shrink-0"
+                />
+                <div className="leading-tight">
+                  <span className="block text-[9px] sm:text-[10px] xl:text-[11px] font-bold uppercase tracking-wider text-[#0052CC] whitespace-nowrap">
+                    Cabinet Médical
+                  </span>
+                  <span className="block text-xs sm:text-sm xl:text-base font-extrabold tracking-tight text-[#061B49] whitespace-nowrap">
+                    Cardiologie <span className="text-[#DC141C]">Paris 16</span>
+                  </span>
+                </div>
+              </button>
 
-          {/* Zone 2: Clean Single-Line Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-xs xl:text-sm font-semibold text-[#061B49]/85">
-            {navItems.map((item) => {
-              const isActive = activePage === item.id;
-              return (
+              {/* Zone 2 (Computer lg/xl/2xl): Single-Line Navigation Links — Calibrated to never overflow */}
+              <nav
+                aria-label={lang === 'fr' ? 'Navigation principale ordinateur' : 'Desktop navigation'}
+                className="hidden lg:flex items-center gap-1 xl:gap-2 2xl:gap-3.5 text-[11.5px] xl:text-xs 2xl:text-sm font-semibold text-[#061B49]/90 min-w-0"
+              >
+                {navItems.map((item) => {
+                  const isActive = activePage === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => navigateToPage(item.id)}
+                      className={`px-2 xl:px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-[#EBF3FC] text-[#0052CC] font-extrabold shadow-2xs'
+                          : 'hover:text-[#0052CC] hover:bg-slate-100/70'
+                      }`}
+                    >
+                      {item.label[lang]}
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* Zone 3: Language Switch + Primary CTA (Phone, Tablet & Computer) + Menu Toggle (Phone & Tablet) */}
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <div className="flex items-center bg-[#F4F8FD]/95 p-0.5 sm:p-1 rounded-full border border-slate-200/80">
+                  <Globe className="w-3.5 h-3.5 text-[#0052CC] ml-1.5 mr-1 hidden xl:block" />
+                  <button
+                    type="button"
+                    onClick={() => setLang('fr')}
+                    className={`px-2 sm:px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold transition-colors cursor-pointer ${
+                      lang === 'fr'
+                        ? 'bg-[#061B49] text-white shadow-xs'
+                        : 'text-slate-600 hover:text-[#061B49]'
+                    }`}
+                  >
+                    FR
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLang('en')}
+                    className={`px-2 sm:px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold transition-colors cursor-pointer ${
+                      lang === 'en'
+                        ? 'bg-[#061B49] text-white shadow-xs'
+                        : 'text-slate-600 hover:text-[#061B49]'
+                    }`}
+                  >
+                    EN
+                  </button>
+                </div>
+
+                {/* Primary CTA Button — Visible on Phone (compact), Tablet & Computer */}
                 <button
-                  key={item.id}
                   type="button"
-                  onClick={() => navigateToPage(item.id)}
-                  className={`py-1 whitespace-nowrap shrink-0 transition-colors cursor-pointer nav-link-underline ${
-                    isActive
-                      ? 'text-[#0052CC] font-bold nav-link-active'
-                      : 'hover:text-[#0052CC]'
-                  }`}
+                  onClick={() => openBookingWithSubject()}
+                  className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 xl:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#0052CC] to-[#DC141C] hover:opacity-95 text-white text-[11px] sm:text-xs xl:text-sm font-bold shadow-md transition-all whitespace-nowrap shrink-0 cursor-pointer"
                 >
-                  {item.label[lang]}
+                  <Calendar className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden sm:inline">
+                    {lang === 'fr' ? 'Prendre RDV' : 'Book Visit'}
+                  </span>
+                  <span className="sm:hidden">{lang === 'fr' ? 'RDV' : 'Book'}</span>
                 </button>
-              );
-            })}
-          </nav>
 
-          {/* Zone 3: Language Switch + Primary CTA + Mobile Menu Button */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            <div className="flex items-center bg-[#F4F8FD]/95 p-0.5 sm:p-1 rounded-full border border-slate-200/80">
-              <Globe className="w-3.5 h-3.5 text-[#0052CC] ml-1.5 mr-1 hidden md:block" />
-              <button
-                type="button"
-                onClick={() => setLang('fr')}
-                className={`px-2 sm:px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-colors cursor-pointer ${
-                  lang === 'fr'
-                    ? 'bg-[#061B49] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-[#061B49]'
-                }`}
-              >
-                FR
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('en')}
-                className={`px-2 sm:px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-colors cursor-pointer ${
-                  lang === 'en'
-                    ? 'bg-[#061B49] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-[#061B49]'
-                }`}
-              >
-                EN
-              </button>
+                {/* Mobile & Tablet Menu Button (< 1024px) */}
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="lg:hidden w-10 h-10 rounded-full bg-[#F4F8FD] hover:bg-[#EBF3FC] text-[#061B49] border border-slate-200 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                  aria-label="Menu"
+                  aria-expanded={mobileMenuOpen}
+                >
+                  {mobileMenuOpen ? (
+                    <X className="w-5 h-5 text-[#DC141C]" />
+                  ) : (
+                    <Menu className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => openBookingWithSubject()}
-              className="hidden sm:inline-flex items-center justify-center px-4 md:px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0052CC] to-[#DC141C] hover:opacity-95 text-white text-xs sm:text-sm font-bold shadow-md transition-all whitespace-nowrap shrink-0 cursor-pointer"
+            {/* Dedicated Tablet Quick-Navigation Bar (640px – 1023px: sm & md) */}
+            <nav
+              aria-label={lang === 'fr' ? 'Navigation rapide tablette' : 'Tablet quick navigation'}
+              className="hidden sm:flex lg:hidden items-center justify-between gap-1.5 pt-2 mt-2 border-t border-slate-200/70 overflow-x-auto no-scrollbar"
             >
-              {lang === 'fr' ? 'Prendre RDV' : 'Book Visit'}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-10 h-10 rounded-full bg-[#F4F8FD] hover:bg-[#EBF3FC] text-[#061B49] border border-slate-200 flex items-center justify-center transition-colors cursor-pointer shrink-0"
-              aria-label="Menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-[#DC141C]" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </header>
-
-        {/* Responsive Animated Mobile & Tablet Navigation Drawer */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="lg:hidden mt-2 max-w-7xl mx-auto bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-2xl p-4 space-y-2.5"
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                {navItems.map((item) => (
+              {navItems.map((item) => {
+                const isActive = activePage === item.id;
+                return (
                   <button
                     key={item.id}
                     type="button"
                     onClick={() => navigateToPage(item.id)}
-                    className={`w-full text-left px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                      activePage === item.id
-                        ? 'bg-[#EBF3FC] text-[#0052CC]'
-                        : 'text-[#061B49] hover:bg-slate-50'
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[#061B49] text-white shadow-xs'
+                        : 'bg-[#F4F8FD] text-[#061B49] hover:bg-[#EBF3FC] hover:text-[#0052CC]'
                     }`}
                   >
-                    <span>{item.label[lang]}</span>
-                    <ArrowRight className="w-4 h-4 text-[#DC141C]" />
+                    {item.label[lang]}
                   </button>
-                ))}
-              </div>
+                );
+              })}
+            </nav>
+          </header>
 
-              <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openBookingWithSubject();
-                  }}
-                  className="w-full sm:w-auto px-5 py-3 rounded-xl bg-gradient-to-r from-[#0052CC] to-[#DC141C] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-md cursor-pointer"
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span>
-                    {lang === 'fr' ? 'Prendre Rendez-vous Maintenant' : 'Book Appointment Now'}
-                  </span>
-                </button>
-
-                <div className="flex items-center justify-between sm:justify-end gap-3 px-2 py-1 text-xs text-slate-600">
-                  <a
-                    href={`tel:${siteData.phone.replace(/\s+/g, '')}`}
-                    className="font-mono font-bold text-[#0052CC] flex items-center gap-1.5"
-                  >
-                    <Phone className="w-3.5 h-3.5 text-[#DC141C]" />
-                    <span>{siteData.phone}</span>
-                  </a>
-                  <span className="font-semibold text-[#061B49]">· Bonapriso</span>
+          {/* Responsive Animated Phone & Tablet Navigation Drawer */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="lg:hidden mt-2 max-w-7xl mx-auto bg-white/96 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-2xl p-4 space-y-3"
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => navigateToPage(item.id)}
+                      className={`w-full text-left px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                        activePage === item.id
+                          ? 'bg-[#EBF3FC] text-[#0052CC]'
+                          : 'text-[#061B49] hover:bg-slate-50'
+                      }`}
+                    >
+                      <span>{item.label[lang]}</span>
+                      <ArrowRight className="w-4 h-4 text-[#DC141C]" />
+                    </button>
+                  ))}
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+
+                <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openBookingWithSubject();
+                    }}
+                    className="w-full sm:w-auto px-5 py-3 rounded-xl bg-gradient-to-r from-[#0052CC] to-[#DC141C] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>
+                      {lang === 'fr' ? 'Prendre Rendez-vous Maintenant' : 'Book Appointment Now'}
+                    </span>
+                  </button>
+
+                  <div className="flex items-center justify-between sm:justify-end gap-3 px-2 py-1 text-xs text-slate-600">
+                    <a
+                      href={`tel:${siteData.phone.replace(/\s+/g, '')}`}
+                      className="font-mono font-bold text-[#0052CC] flex items-center gap-1.5"
+                    >
+                      <Phone className="w-3.5 h-3.5 text-[#DC141C]" />
+                      <span>{siteData.phone}</span>
+                    </a>
+                    <span className="font-semibold text-[#061B49]">· Bonapriso</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
       {/* MAIN PAGE CONTENT */}
       <main className="flex-1">
@@ -571,17 +611,10 @@ export default function App() {
                     )}
                   </h1>
 
-                  {/* ECG Red Pulse Line Inspired by the Official Logo */}
-                  <div className="w-48 sm:w-72">
-                    <svg viewBox="0 0 280 28" className="w-full h-7" fill="none">
-                      <path
-                        d="M0 14 H95 L108 4 L120 24 L134 2 L148 26 L160 10 L170 14 H280"
-                        stroke="#DC141C"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                  {/* Live Lottie ECG Monitor Wave & Pulse Inspired by the Official Logo */}
+                  <div className="flex items-center gap-3">
+                    <MedicalLottie variant="heartbeat-pulse" className="w-11 h-11" />
+                    <MedicalLottie variant="ecg-monitor" className="w-48 sm:w-64 h-10" />
                   </div>
 
                   <p className="text-base sm:text-xl font-semibold text-sky-100 italic">
@@ -1118,11 +1151,14 @@ export default function App() {
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#DC141C]">
-                  {lang === 'fr'
-                    ? 'SECTION 05 · TECHNOLOGIES & EXPLORATIONS CARDIOLOGIQUES'
-                    : 'SECTION 05 · TECHNOLOGIES & CARDIAC EXPLORATIONS'}
-                </p>
+                <div className="inline-flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#DC141C]">
+                  <MedicalLottie variant="ecg-monitor" className="w-20 h-7" />
+                  <span>
+                    {lang === 'fr'
+                      ? 'SECTION 05 · TECHNOLOGIES & EXPLORATIONS CARDIOLOGIQUES'
+                      : 'SECTION 05 · TECHNOLOGIES & CARDIAC EXPLORATIONS'}
+                  </span>
+                </div>
                 <h2 className="text-2xl sm:text-4xl font-extrabold text-[#061B49] mt-1 tracking-tight">
                   {lang === 'fr' ? (
                     <>
@@ -1460,7 +1496,7 @@ export default function App() {
               </button>
             </div>
 
-            {/* Equipment Showcase Grid — Dedicated Image + Full Untruncated Text Panel */}
+            {/* Equipment Showcase Grid — All 8 Real Medical Device Photographs + Full Untruncated Text Panels */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
               {[
                 {
@@ -1468,25 +1504,64 @@ export default function App() {
                   src: EQUIPMENT_IMAGES.echoDoppler,
                   tag: { fr: 'IMAGERIE CARDIAQUE HD', en: 'HD CARDIAC IMAGING' },
                   title: {
-                    fr: 'Échocardiographie Doppler Couleur & ETO',
-                    en: 'Color Doppler Echocardiography & TEE',
+                    fr: 'Échocardiographie Doppler Couleur',
+                    en: 'Color Doppler Echocardiography',
                   },
                   desc: {
-                    fr: 'Analyse en temps réel du muscle cardiaque, des valves et des flux vasculaires sur place.',
-                    en: 'Real-time assessment of heart muscle, valves, and vascular blood flow on-site.',
+                    fr: 'Analyse en temps réel du muscle cardiaque, des valves et des flux intracardiaques sur place.',
+                    en: 'Real-time assessment of heart muscle, valves, and intracardiac blood flow on-site.',
+                  },
+                },
+                {
+                  span: 'lg:col-span-4',
+                  src: EQUIPMENT_IMAGES.etoProbe,
+                  tag: { fr: 'SONDE MULTIPLAN HD', en: 'MULTIPLANE TEE PROBE' },
+                  title: {
+                    fr: 'Échographie Trans-Œsophagienne (ETO)',
+                    en: 'Transesophageal Echocardiography (TEE)',
+                  },
+                  desc: {
+                    fr: 'Imagerie ultrasonore haute précision des valves cardiaques et des cavités auriculaires.',
+                    en: 'High-precision ultrasound imaging of heart valves and atrial chambers.',
+                  },
+                },
+                {
+                  span: 'lg:col-span-4',
+                  src: EQUIPMENT_IMAGES.vascularDoppler,
+                  tag: { fr: 'ARTÈRES & VEINES', en: 'ARTERIES & VEINS' },
+                  title: {
+                    fr: 'Écho-Doppler Vasculaire (Carotides & Membres)',
+                    en: 'Vascular Color Doppler (Carotid & Limbs)',
+                  },
+                  desc: {
+                    fr: 'Dépistage des sténoses carotidiennes, prévention des AVC et exploration veineuse et artérielle.',
+                    en: 'Carotid stenosis screening, stroke prevention, and venous/arterial exploration.',
                   },
                 },
                 {
                   span: 'lg:col-span-4',
                   src: EQUIPMENT_IMAGES.ecgHolter,
-                  tag: { fr: 'RYTHMOLOGIE & ÉLECTROPHYSIOLOGIE', en: 'RHYTHMOLOGY & ECG' },
+                  tag: { fr: 'ÉLECTROCARDIOGRAPHIE', en: '12-LEAD ECG' },
                   title: {
-                    fr: 'ECG 12 Dérivations & Holter ECG 24h–72h',
-                    en: '12-Lead ECG & 24h–72h Holter Monitor',
+                    fr: 'ECG Numérique 12 Dérivations',
+                    en: 'Digital 12-Lead Electrocardiogram',
                   },
                   desc: {
-                    fr: 'Détection immédiate des arythmies, palpitations et troubles de la conduction.',
-                    en: 'Immediate detection of arrhythmias, palpitations, and conduction disorders.',
+                    fr: 'Tracé immédiat au repos pour détecter troubles du rythme, ischémie et anomalies de conduction.',
+                    en: 'Immediate resting trace to detect arrhythmias, ischemia, and conduction abnormalities.',
+                  },
+                },
+                {
+                  span: 'lg:col-span-4',
+                  src: EQUIPMENT_IMAGES.holterWearable,
+                  tag: { fr: 'RYTHMOLOGIE 24H–72H', en: '24H–72H HOLTER' },
+                  title: {
+                    fr: 'Boîtier Holter ECG Portable (24h–72h)',
+                    en: 'Wearable 24h–72h Holter ECG Recorder',
+                  },
+                  desc: {
+                    fr: 'Enregistrement continu jour et nuit des palpitations et arythmies intermittentes.',
+                    en: 'Continuous day-and-night recording of palpitations and intermittent arrhythmias.',
                   },
                 },
                 {
@@ -1534,7 +1609,7 @@ export default function App() {
                   initial={{ opacity: 0, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: idx * 0.07 }}
+                  transition={{ duration: 0.45, delay: idx * 0.05 }}
                   onClick={() => openBookingWithSubject(eq.title[lang])}
                   className={`${eq.span} bg-[#061B49] rounded-3xl overflow-hidden flex flex-col justify-between group cursor-pointer section-hover-border shadow-md`}
                 >
@@ -1568,38 +1643,73 @@ export default function App() {
               ))}
             </div>
 
-            <div className="bg-white rounded-3xl p-6 sm:p-8 wave-hover-card flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+            {/* Clinic Interior & Consultation Showcase Card with Real Photography + Lottie */}
+            <div className="bg-white rounded-3xl overflow-hidden wave-hover-card grid grid-cols-1 lg:grid-cols-12 shadow-md">
+              <div className="lg:col-span-5 relative min-h-[240px] sm:min-h-[280px] overflow-hidden">
                 <img
-                  src={siteData.logoUrl}
+                  src={EQUIPMENT_IMAGES.clinicInterior}
                   alt={siteData.clinicName[lang]}
                   referrerPolicy="no-referrer"
-                  className="w-24 h-24 object-contain shrink-0 transition-transform duration-500 hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#DC141C]">
-                    {siteData.sloganPrimary[lang]}
-                  </span>
-                  <h3 className="text-lg sm:text-xl font-extrabold text-[#061B49] mt-0.5">
-                    {siteData.clinicName[lang]} · {siteData.doctorName}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-                    {siteData.addressFull[lang]}
-                  </p>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#061B49]/80 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white flex items-center gap-3">
+                  <img
+                    src={siteData.logoUrl}
+                    alt={siteData.clinicName[lang]}
+                    referrerPolicy="no-referrer"
+                    className="w-12 h-12 rounded-xl bg-white p-1 object-contain shrink-0 shadow-md"
+                  />
+                  <div>
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-sky-300">
+                      Bonapriso, Douala · Cameroun
+                    </div>
+                    <div className="text-sm font-extrabold">{siteData.clinicName[lang]}</div>
+                  </div>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => navigateToPage('insights')}
-                className="px-5 py-3 rounded-full bg-[#061B49] hover:bg-[#0052CC] text-white text-xs font-extrabold flex items-center gap-2 shrink-0 transition-colors cursor-pointer"
-              >
-                <span>
-                  {lang === 'fr'
-                    ? 'Lire le Blog Cardiology Insights'
-                    : 'Read Cardiology Insights Blog'}
-                </span>
-                <ArrowRight className="w-4 h-4 text-[#FF4D58]" />
-              </button>
+
+              <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between gap-5">
+                <div className="space-y-2.5">
+                  <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#DC141C]">
+                    <MedicalLottie variant="heartbeat-pulse" className="w-8 h-8" />
+                    <span>{siteData.sloganPrimary[lang]}</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#061B49]">
+                    {lang === 'fr'
+                      ? 'Un Plateau Cardiologique Complet Réuni en un Seul Lieu à Bonapriso'
+                      : 'A Complete Cardiology Diagnostic Center Under One Roof in Bonapriso'}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    {siteData.addressFull[lang]} — {siteData.synthesisParagraph2[lang]}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => openBookingWithSubject()}
+                    className="px-5 py-3 rounded-full bg-gradient-to-r from-[#0052CC] to-[#DC141C] text-white text-xs font-extrabold flex items-center gap-2 shadow-md cursor-pointer"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>
+                      {lang === 'fr' ? 'Prendre Rendez-vous' : 'Book an Appointment'}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigateToPage('insights')}
+                    className="px-5 py-3 rounded-full bg-[#061B49] hover:bg-[#0052CC] text-white text-xs font-extrabold flex items-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <span>
+                      {lang === 'fr'
+                        ? 'Lire le Blog Cardiology Insights'
+                        : 'Read Cardiology Insights Blog'}
+                    </span>
+                    <ArrowRight className="w-4 h-4 text-[#FF4D58]" />
+                  </button>
+                </div>
+              </div>
             </div>
           </section>
         )}

@@ -22,6 +22,7 @@ import {
 } from '../data/initialClinicData';
 import { ExplorationIllustration } from './MedicalIllustrations';
 import { SelectedClinicalItem } from './ClinicalDetailModal';
+import { MedicalLottie } from './MedicalLottie';
 
 interface CardiologyInsightsSectionProps {
   siteData: ClinicSiteData;
@@ -46,18 +47,20 @@ export const CardiologyInsightsSection: React.FC<CardiologyInsightsSectionProps>
 
   const mapArticleIllustration = (
     illustrationType: HealthArticleItem['illustrationType']
-  ): ExplorationItem['illustrationType'] => {
+  ): string => {
     switch (illustrationType) {
       case 'sleep-apnea':
         return 'polygraphy';
       case 'hypertension':
-        return 'mapa';
+        return 'hypertension';
       case 'rhythm':
         return 'holter-ecg';
       case 'stress-test':
         return 'stress-test';
       case 'vascular':
         return 'vascular';
+      case 'checkup':
+        return 'clinic-interior';
       default:
         return 'echo-doppler';
     }
@@ -159,7 +162,7 @@ export const CardiologyInsightsSection: React.FC<CardiologyInsightsSectionProps>
   }, [siteData, lang]);
 
   return (
-    <div className="space-y-10">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-10">
       {/* Embedded JSON-LD for Search Engine Crawlers */}
       <script
         type="application/ld+json"
@@ -169,7 +172,8 @@ export const CardiologyInsightsSection: React.FC<CardiologyInsightsSectionProps>
       {/* Section Header */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#DC141C]">
+          <div className="inline-flex flex-wrap items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#DC141C]">
+            <MedicalLottie variant="ecg-monitor" className="w-20 h-7" />
             <Sparkles className="w-3.5 h-3.5" />
             <span>
               {lang === 'fr'
@@ -503,6 +507,6 @@ export const CardiologyInsightsSection: React.FC<CardiologyInsightsSectionProps>
           </button>
         </div>
       )}
-    </div>
+    </section>
   );
 };
