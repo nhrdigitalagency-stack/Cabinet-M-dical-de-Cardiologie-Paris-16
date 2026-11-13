@@ -1614,6 +1614,7 @@ export default function App() {
             lang={lang}
             onSelectClinicalItem={(item) => setSelectedClinicalItem(item)}
             onBookWithSubject={(subj) => openBookingWithSubject(subj)}
+            onNavigateToSection={(sec) => navigateToPage(sec)}
           />
         )}
 
