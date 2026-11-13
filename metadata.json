@@ -1,0 +1,6 @@
+{
+  "name": "Cabinet Médical de Cardiologie Paris 16 — Dr Annick TCHAM",
+  "description": "Cabinet Médical de Cardiologie Paris 16 dirigé par le Dr Annick TCHAM à Bonapriso, Douala. Consultations cardiologiques, ECG, Échocardiographie Doppler, Holter, MAPA et dépistage de l'apnée du sommeil.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
