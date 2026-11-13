@@ -14,13 +14,15 @@
   html {
     scroll-behavior: smooth;
     font-family: 'Poppins', sans-serif;
+    overflow-x: clip;
   }
 
   body {
     font-family: 'Poppins', sans-serif;
     background-color: #F4F8FD;
     color: #061B49;
-    overflow-x: hidden;
+    overflow-x: clip;
+    width: 100%;
   }
 
   h1, h2, h3, h4, h5, h6, button, input, select, textarea, .font-display {

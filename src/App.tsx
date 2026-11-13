@@ -251,14 +251,46 @@ export default function App() {
       : `CARDIAC EMERGENCY — Hello ${siteData.doctorName} (${siteData.clinicName.en}), I need urgent cardiological care or a fast appointment.`
   )}`;
 
-  const navItems: Array<{ id: PageView; label: { fr: string; en: string } }> = [
-    { id: 'home', label: { fr: 'Accueil', en: 'Home' } },
-    { id: 'about', label: { fr: 'Dr TCHAM', en: 'Dr TCHAM' } },
-    { id: 'pathologies', label: { fr: 'Spécialités', en: 'Specialties' } },
-    { id: 'explorations', label: { fr: 'Explorations', en: 'Explorations' } },
-    { id: 'insights', label: { fr: 'Cardiology Insights', en: 'Cardiology Insights' } },
-    { id: 'testimonials', label: { fr: 'Témoignages', en: 'Testimonials' } },
-    { id: 'contact', label: { fr: 'Plan & Contact', en: 'Map & Contact' } },
+  const navItems: Array<{
+    id: PageView;
+    label: { fr: string; en: string };
+    shortLabel: { fr: string; en: string };
+  }> = [
+    {
+      id: 'home',
+      label: { fr: 'Accueil', en: 'Home' },
+      shortLabel: { fr: 'Accueil', en: 'Home' },
+    },
+    {
+      id: 'about',
+      label: { fr: 'Dr TCHAM', en: 'Dr TCHAM' },
+      shortLabel: { fr: 'Dr TCHAM', en: 'Dr TCHAM' },
+    },
+    {
+      id: 'pathologies',
+      label: { fr: 'Spécialités', en: 'Specialties' },
+      shortLabel: { fr: 'Spécialités', en: 'Specialties' },
+    },
+    {
+      id: 'explorations',
+      label: { fr: 'Explorations', en: 'Explorations' },
+      shortLabel: { fr: 'Explorations', en: 'Explorations' },
+    },
+    {
+      id: 'insights',
+      label: { fr: 'Cardiology Insights', en: 'Cardiology Insights' },
+      shortLabel: { fr: 'Blog Santé', en: 'Insights' },
+    },
+    {
+      id: 'testimonials',
+      label: { fr: 'Témoignages', en: 'Testimonials' },
+      shortLabel: { fr: 'Avis', en: 'Reviews' },
+    },
+    {
+      id: 'contact',
+      label: { fr: 'Plan & Contact', en: 'Map & Contact' },
+      shortLabel: { fr: 'Contact', en: 'Contact' },
+    },
   ];
 
   const getParticularityIcon = (iconName: string) => {
@@ -293,129 +325,56 @@ export default function App() {
         onComplete={handleSplashComplete}
       />
 
-      {/* IMMERSIVE ENTRY CONTAINER — Zooms & sharpens into focus as the 5s logo splash completes */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.94, filter: 'blur(10px)' }}
-        animate={{
-          opacity: isSplashLoading ? 0 : 1,
-          scale: isSplashLoading ? 0.95 : 1,
-          filter: isSplashLoading ? 'blur(10px)' : 'blur(0px)',
-        }}
-        transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
-        className="min-h-screen flex flex-col bg-[#F4F8FD] text-[#061B49]"
+      {/* MAIN APPLICATION CONTAINER — No transform/filter left on root so sticky header & fixed modals work 100% natively */}
+      <div
+        className={`min-h-screen flex flex-col bg-[#F4F8FD] text-[#061B49] w-full max-w-[100vw] overflow-x-clip transition-opacity duration-700 ${
+          isSplashLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
       >
-        {/* FLOATING TRANSPARENT ROUNDED HEADER — Fully Responsive on Computer (lg/xl), Tablet (sm/md) & Phone (<sm) */}
-        <div className="sticky top-2 sm:top-3 z-40 px-2 sm:px-4 lg:px-6 xl:px-8">
-          <header className="max-w-7xl mx-auto bg-white/88 backdrop-blur-xl rounded-2xl lg:rounded-full border border-white/90 shadow-[0_12px_36px_-10px_rgba(6,27,73,0.16)] px-3 sm:px-5 lg:px-5 xl:px-7 py-2 sm:py-2.5 lg:py-0 lg:h-20 flex flex-col justify-center transition-all">
-            <div className="flex items-center justify-between gap-2 sm:gap-3 lg:gap-3 xl:gap-5 w-full">
-              {/* Zone 1: Brand Wordmark + Official Logo — Clean & readable on Phone, Tablet, and Computer */}
-              <button
-                type="button"
-                onClick={() => navigateToPage('home')}
-                className="flex items-center gap-2 sm:gap-2.5 xl:gap-3 text-left min-w-0 shrink-0 cursor-pointer group"
-              >
-                <img
-                  src={siteData.logoUrl}
-                  alt={siteData.clinicName[lang]}
-                  referrerPolicy="no-referrer"
-                  className="w-9 h-9 sm:w-11 sm:h-11 xl:w-12 xl:h-12 object-contain rounded-xl bg-white p-1 border border-[#0052CC]/20 group-hover:border-[#DC141C] transition-colors shrink-0"
-                />
-                <div className="leading-tight">
-                  <span className="block text-[9px] sm:text-[10px] xl:text-[11px] font-bold uppercase tracking-wider text-[#0052CC] whitespace-nowrap">
-                    Cabinet Médical
-                  </span>
-                  <span className="block text-xs sm:text-sm xl:text-base font-extrabold tracking-tight text-[#061B49] whitespace-nowrap">
-                    Cardiologie <span className="text-[#DC141C]">Paris 16</span>
-                  </span>
-                </div>
-              </button>
+        {/* BACKDROP OVERLAY FOR MOBILE & TABLET MENU */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-[#061B49]/35 backdrop-blur-[2px] z-40 lg:hidden"
+              aria-hidden="true"
+            />
+          )}
+        </AnimatePresence>
 
-              {/* Zone 2 (Computer lg/xl/2xl): Single-Line Navigation Links — Calibrated to never overflow */}
-              <nav
-                aria-label={lang === 'fr' ? 'Navigation principale ordinateur' : 'Desktop navigation'}
-                className="hidden lg:flex items-center gap-1 xl:gap-2 2xl:gap-3.5 text-[11.5px] xl:text-xs 2xl:text-sm font-semibold text-[#061B49]/90 min-w-0"
-              >
-                {navItems.map((item) => {
-                  const isActive = activePage === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => navigateToPage(item.id)}
-                      className={`px-2 xl:px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all cursor-pointer ${
-                        isActive
-                          ? 'bg-[#EBF3FC] text-[#0052CC] font-extrabold shadow-2xs'
-                          : 'hover:text-[#0052CC] hover:bg-slate-100/70'
-                      }`}
-                    >
-                      {item.label[lang]}
-                    </button>
-                  );
-                })}
-              </nav>
-
-              {/* Zone 3: Language Switch + Primary CTA (Phone, Tablet & Computer) + Menu Toggle (Phone & Tablet) */}
-              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                <div className="flex items-center bg-[#F4F8FD]/95 p-0.5 sm:p-1 rounded-full border border-slate-200/80">
-                  <Globe className="w-3.5 h-3.5 text-[#0052CC] ml-1.5 mr-1 hidden xl:block" />
-                  <button
-                    type="button"
-                    onClick={() => setLang('fr')}
-                    className={`px-2 sm:px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold transition-colors cursor-pointer ${
-                      lang === 'fr'
-                        ? 'bg-[#061B49] text-white shadow-xs'
-                        : 'text-slate-600 hover:text-[#061B49]'
-                    }`}
-                  >
-                    FR
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLang('en')}
-                    className={`px-2 sm:px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold transition-colors cursor-pointer ${
-                      lang === 'en'
-                        ? 'bg-[#061B49] text-white shadow-xs'
-                        : 'text-slate-600 hover:text-[#061B49]'
-                    }`}
-                  >
-                    EN
-                  </button>
-                </div>
-
-                {/* Primary CTA Button — Visible on Phone (compact), Tablet & Computer */}
-                <button
-                  type="button"
-                  onClick={() => openBookingWithSubject()}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 xl:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#0052CC] to-[#DC141C] hover:opacity-95 text-white text-[11px] sm:text-xs xl:text-sm font-bold shadow-md transition-all whitespace-nowrap shrink-0 cursor-pointer"
-                >
-                  <Calendar className="w-3.5 h-3.5 shrink-0" />
-                  <span className="hidden sm:inline">
-                    {lang === 'fr' ? 'Prendre RDV' : 'Book Visit'}
-                  </span>
-                  <span className="sm:hidden">{lang === 'fr' ? 'RDV' : 'Book'}</span>
-                </button>
-
-                {/* Mobile & Tablet Menu Button (< 1024px) */}
-                <button
-                  type="button"
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="lg:hidden w-10 h-10 rounded-full bg-[#F4F8FD] hover:bg-[#EBF3FC] text-[#061B49] border border-slate-200 flex items-center justify-center transition-colors cursor-pointer shrink-0"
-                  aria-label="Menu"
-                  aria-expanded={mobileMenuOpen}
-                >
-                  {mobileMenuOpen ? (
-                    <X className="w-5 h-5 text-[#DC141C]" />
-                  ) : (
-                    <Menu className="w-5 h-5" />
-                  )}
-                </button>
+        {/* FLOATING TRANSPARENT ROUNDED HEADER — Calibrated for Mobile (320px+), Tablet (640px–1023px), Laptop (1024px–1279px) & Desktop (1280px+) */}
+        <div className="sticky top-2 sm:top-3 z-50 w-full px-2 sm:px-4 lg:px-4 xl:px-8">
+          <header className="max-w-7xl mx-auto bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-full border border-white/90 shadow-[0_12px_36px_-10px_rgba(6,27,73,0.18)] px-2.5 sm:px-4 lg:px-4 xl:px-6 h-14 sm:h-16 lg:h-[68px] xl:h-20 flex items-center justify-between gap-1.5 sm:gap-3 lg:gap-2 xl:gap-4 transition-all">
+            {/* Zone 1: Brand Wordmark + Official Logo — Shrink-safe on 320px Mobile, crisp on Tablet & Laptop */}
+            <button
+              type="button"
+              onClick={() => navigateToPage('home')}
+              className="flex items-center gap-1.5 sm:gap-2.5 text-left min-w-0 shrink cursor-pointer group"
+            >
+              <img
+                src={siteData.logoUrl}
+                alt={siteData.clinicName[lang]}
+                referrerPolicy="no-referrer"
+                className="w-8 h-8 sm:w-10 sm:h-10 xl:w-11 xl:h-11 object-contain rounded-xl bg-white p-0.5 sm:p-1 border border-[#0052CC]/20 group-hover:border-[#DC141C] transition-colors shrink-0"
+              />
+              <div className="leading-tight min-w-0">
+                <span className="block text-[8.5px] sm:text-[10px] font-bold uppercase tracking-wider text-[#0052CC] truncate">
+                  Cabinet Médical
+                </span>
+                <span className="block text-[11px] sm:text-sm xl:text-[15px] font-extrabold tracking-tight text-[#061B49] truncate">
+                  Cardiologie <span className="text-[#DC141C]">Paris 16</span>
+                </span>
               </div>
-            </div>
+            </button>
 
-            {/* Dedicated Tablet Quick-Navigation Bar (640px – 1023px: sm & md) */}
+            {/* Zone 2: Laptop (1024px–1279px) & Desktop (1280px+) Single-Line Navigation */}
             <nav
-              aria-label={lang === 'fr' ? 'Navigation rapide tablette' : 'Tablet quick navigation'}
-              className="hidden sm:flex lg:hidden items-center justify-between gap-1.5 pt-2 mt-2 border-t border-slate-200/70 overflow-x-auto no-scrollbar"
+              aria-label={lang === 'fr' ? 'Navigation principale' : 'Primary navigation'}
+              className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1.5 2xl:gap-2.5 text-xs xl:text-[13px] font-semibold text-[#061B49]/90 shrink-0"
             >
               {navItems.map((item) => {
                 const isActive = activePage === item.id;
@@ -424,45 +383,130 @@ export default function App() {
                     key={item.id}
                     type="button"
                     onClick={() => navigateToPage(item.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                    className={`px-2 xl:px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all cursor-pointer nav-link-underline ${
                       isActive
-                        ? 'bg-[#061B49] text-white shadow-xs'
-                        : 'bg-[#F4F8FD] text-[#061B49] hover:bg-[#EBF3FC] hover:text-[#0052CC]'
+                        ? 'bg-[#EBF3FC] text-[#0052CC] font-extrabold nav-link-active'
+                        : 'hover:text-[#0052CC] hover:bg-slate-100/70'
                     }`}
                   >
-                    {item.label[lang]}
+                    {/* Concise label on standard 1024px-1279px laptops so it never overflows; full label on 1280px+ */}
+                    <span className="xl:hidden">{item.shortLabel[lang]}</span>
+                    <span className="hidden xl:inline">{item.label[lang]}</span>
                   </button>
                 );
               })}
             </nav>
+
+            {/* Zone 3: Language Switch + Primary CTA + Hamburger Button (Mobile & Tablet < 1024px) */}
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              {/* Language Toggle FR / EN */}
+              <div className="flex items-center bg-[#F4F8FD] p-0.5 rounded-full border border-slate-200/90">
+                <Globe className="w-3.5 h-3.5 text-[#0052CC] ml-1.5 mr-0.5 hidden xl:block" />
+                <button
+                  type="button"
+                  onClick={() => setLang('fr')}
+                  className={`px-1.5 sm:px-2 py-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-colors cursor-pointer ${
+                    lang === 'fr'
+                      ? 'bg-[#061B49] text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-[#061B49]'
+                  }`}
+                >
+                  FR
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLang('en')}
+                  className={`px-1.5 sm:px-2 py-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-colors cursor-pointer ${
+                    lang === 'en'
+                      ? 'bg-[#061B49] text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-[#061B49]'
+                  }`}
+                >
+                  EN
+                </button>
+              </div>
+
+              {/* Primary CTA Button — Adapts label width across Mobile, Tablet, Laptop & Desktop */}
+              <button
+                type="button"
+                onClick={() => openBookingWithSubject()}
+                className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 xl:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-[#0052CC] to-[#DC141C] hover:opacity-95 text-white text-[10px] sm:text-xs font-bold shadow-md transition-all whitespace-nowrap shrink-0 cursor-pointer"
+              >
+                <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                <span className="hidden sm:inline">
+                  {lang === 'fr' ? 'Prendre RDV' : 'Book Visit'}
+                </span>
+                <span className="sm:hidden">{lang === 'fr' ? 'RDV' : 'Book'}</span>
+              </button>
+
+              {/* Mobile & Tablet Menu Toggle Button (< 1024px) */}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden h-9 sm:h-10 px-2.5 sm:px-3.5 rounded-full bg-[#061B49] hover:bg-[#0052CC] text-white flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-xs"
+                aria-label="Menu"
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-4 h-4 sm:w-5 sm:h-5 text-[#FF4D58]" />
+                ) : (
+                  <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+                )}
+                <span className="hidden md:inline text-xs font-bold">
+                  {mobileMenuOpen
+                    ? lang === 'fr'
+                      ? 'Fermer'
+                      : 'Close'
+                    : 'Menu'}
+                </span>
+              </button>
+            </div>
           </header>
 
-          {/* Responsive Animated Phone & Tablet Navigation Drawer */}
+          {/* Responsive Animated Phone & Tablet Navigation Drawer (< 1024px) */}
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                initial={{ opacity: 0, y: -8, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                exit={{ opacity: 0, y: -8, scale: 0.98 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="lg:hidden mt-2 max-w-7xl mx-auto bg-white/96 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-2xl p-4 space-y-3"
+                className="lg:hidden mt-2 max-w-7xl mx-auto bg-white/98 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-2xl p-3.5 sm:p-5 space-y-3 max-h-[82vh] overflow-y-auto"
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                  {navItems.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => navigateToPage(item.id)}
-                      className={`w-full text-left px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                        activePage === item.id
-                          ? 'bg-[#EBF3FC] text-[#0052CC]'
-                          : 'text-[#061B49] hover:bg-slate-50'
-                      }`}
-                    >
-                      <span>{item.label[lang]}</span>
-                      <ArrowRight className="w-4 h-4 text-[#DC141C]" />
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0052CC]">
+                    {lang === 'fr'
+                      ? 'Navigation · Cabinet Cardiologie Paris 16'
+                      : 'Navigation · Paris 16 Cardiology Clinic'}
+                  </span>
+                  <span className="text-[11px] font-semibold text-slate-400">
+                    {siteData.doctorName}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
+                  {navItems.map((item) => {
+                    const isActive = activePage === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => navigateToPage(item.id)}
+                        className={`w-full text-left px-3.5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                          isActive
+                            ? 'bg-[#061B49] text-white shadow-xs'
+                            : 'bg-[#F4F8FD] text-[#061B49] hover:bg-[#EBF3FC] hover:text-[#0052CC]'
+                        }`}
+                      >
+                        <span>{item.label[lang]}</span>
+                        <ArrowRight
+                          className={`w-4 h-4 shrink-0 ${
+                            isActive ? 'text-[#FF4D58]' : 'text-[#DC141C]'
+                          }`}
+                        />
+                      </button>
+                    );
+                  })}
                 </div>
 
                 <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
@@ -476,7 +520,9 @@ export default function App() {
                   >
                     <Calendar className="w-4 h-4" />
                     <span>
-                      {lang === 'fr' ? 'Prendre Rendez-vous Maintenant' : 'Book Appointment Now'}
+                      {lang === 'fr'
+                        ? 'Prendre Rendez-vous Maintenant'
+                        : 'Book Appointment Now'}
                     </span>
                   </button>
 
@@ -2393,7 +2439,7 @@ export default function App() {
         onSiteDataUpdated={(updated) => setSiteData(updated)}
         onTestimonialsUpdated={(updatedList) => setTestimonials(updatedList)}
       />
-      </motion.div>
+      </div>
     </>
   );
 }
